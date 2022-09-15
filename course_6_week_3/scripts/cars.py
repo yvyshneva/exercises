@@ -71,7 +71,31 @@ def cars_dict_to_table(car_data):
   """Turns the data in car_data into a list of lists."""
   table_data = [["ID", "Car", "Price", "Total Sales"]]
   for item in car_data:
-    table_data.append([item["id"], format_car(item["car"]), item["price"], item["total_$
+    table_data.append([item["id"], format_car(item["car"]), item["price"], item["total_sales"]])
   return table_data
 
 
+
+def main(argv):
+  """Process the JSON data and generate a full report out of it."""
+  data = load_data("car_sales.json")
+  summary = process_data(data)
+  print(summary)
+  summary_to_send = "<br/>".join(summary)
+
+  table_data = cars_dict_to_table(load_data("/car_sales.json"))
+  # TODO: turn this into a PDF report
+  reports.generate("/tmp/cars.pdf", "A Complete Inventory of My Fruit", "This is all my fruit.", table_data)
+
+  sender = "automation@example.com"
+  receiver = "{}@example.com".format(os.environ.get('USER'))
+  subject = "Sales summary for last month"
+  body = "/n".join(summary)
+
+  message = emails.generate(sender, receiver, subject, body, "/tmp/report.pdf")
+  emails.send(message)
+  # TODO: send the PDF report as an email attachment
+
+
+if __name__ == "__main__":
+  main(sys.argv)
