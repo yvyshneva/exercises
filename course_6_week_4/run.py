@@ -19,6 +19,6 @@ for file in description_files:
 
         response = requests.post(url, data=image_data)
         if response.status_code == 201:
-            print("Request was succeeded")
+            print(f"Request was succeeded: image {file} uploaded")
         else:
             print("Response: ", response.status_code)
